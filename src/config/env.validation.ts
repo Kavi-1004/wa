@@ -1,4 +1,4 @@
-import { plainToInstance } from 'class-transformer';
+import { plainToInstance } from "class-transformer";
 import {
   IsEnum,
   IsNumber,
@@ -6,12 +6,12 @@ import {
   IsString,
   Min,
   validateSync,
-} from 'class-validator';
+} from "class-validator";
 
 enum Environment {
-  Development = 'development',
-  Production = 'production',
-  Test = 'test',
+  Development = "development",
+  Production = "production",
+  Test = "test",
 }
 
 class EnvironmentVariables {
@@ -35,11 +35,11 @@ class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  JWT_EXPIRES_IN: string = '15m';
+  JWT_EXPIRES_IN: string = "15m";
 
   @IsString()
   @IsOptional()
-  JWT_REFRESH_EXPIRES_IN: string = '7d';
+  JWT_REFRESH_EXPIRES_IN: string = "7d";
 
   @IsNumber()
   @Min(4)
@@ -48,11 +48,27 @@ class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  REDIS_HOST: string = 'localhost';
+  REDIS_HOST: string = "localhost";
 
   @IsNumber()
   @IsOptional()
   REDIS_PORT: number = 6379;
+
+  @IsString()
+  @IsOptional()
+  WHATSAPP_API_TOKEN: string = "";
+
+  @IsString()
+  @IsOptional()
+  WHATSAPP_BUSINESS_ID: string = "";
+
+  @IsString()
+  @IsOptional()
+  WHATSAPP_PHONE_NUMBER_ID: string = "";
+
+  @IsString()
+  @IsOptional()
+  WHATSAPP_API_URL: string = "https://graph.facebook.com/v25.0";
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -65,11 +81,11 @@ export function validate(config: Record<string, unknown>) {
 
   if (errors.length > 0) {
     const messages = errors.map((err) => {
-      const constraints = Object.values(err.constraints || {}).join(', ');
+      const constraints = Object.values(err.constraints || {}).join(", ");
       return `  - ${err.property}: ${constraints}`;
     });
     throw new Error(
-      `Environment validation failed:\n${messages.join('\n')}\n\nCheck your .env file or environment variables.`,
+      `Environment validation failed:\n${messages.join("\n")}\n\nCheck your .env file or environment variables.`,
     );
   }
 

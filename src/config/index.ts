@@ -1,8 +1,9 @@
-export { default as appConfig } from './app.config';
-export { default as authConfig } from './auth.config';
-export { default as databaseConfig } from './database.config';
-export { default as redisConfig } from './redis.config';
-export { default as mailConfig } from './mail.config';
-export { default as queueConfig } from './queue.config';
-export { default as monitoringConfig } from './monitoring.config';
-export { validate } from './env.validation';
+export { default as appConfig } from "./app.config";
+export { default as authConfig } from "./auth.config";
+export { default as databaseConfig } from "./database.config";
+export { default as redisConfig } from "./redis.config";
+export { default as mailConfig } from "./mail.config";
+export { default as queueConfig } from "./queue.config";
+export { default as monitoringConfig } from "./monitoring.config";
+export { default as whatsappConfig } from "./whatsapp.config";
+export { validate } from "./env.validation";

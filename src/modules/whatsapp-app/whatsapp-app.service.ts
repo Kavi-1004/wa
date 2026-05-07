@@ -9,7 +9,7 @@ interface WhatsAppApiResponse {
   error?: { message: string; type: string; code: number };
 }
 
-interface SendResult {
+export interface SendResult {
   phoneNumber: string;
   name: string | null;
   status: "sent" | "failed";

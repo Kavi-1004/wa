@@ -10,6 +10,7 @@ import {
 } from "@nestjs/common";
 import {
   ApiTags,
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiExcludeEndpoint,
@@ -18,12 +19,13 @@ import type { Response } from "express";
 import { WhatsAppAppService } from "./whatsapp-app.service";
 import { StoreContactsDto } from "./dto/store-contacts.dto";
 import { SendMessageDto } from "./dto/send-message.dto";
-import { Public } from "../../common/decorators";
+import { Roles } from "../../common/decorators";
+import { Role } from "../../common/enums";
 import { renderDashboard } from "./whatsapp-dashboard.renderer";
 
 @ApiTags("WhatsApp")
+@ApiBearerAuth()
 @Controller("whatsapp")
-@Public()
 export class WhatsAppAppController {
   constructor(private readonly whatsAppAppService: WhatsAppAppService) {}
 
@@ -53,6 +55,7 @@ export class WhatsAppAppController {
   }
 
   @Get("dashboard")
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @ApiExcludeEndpoint()
   async dashboard(
     @Query("status") status: string | undefined,

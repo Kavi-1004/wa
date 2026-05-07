@@ -223,6 +223,52 @@ export class WhatsAppAppService {
     }
   }
 
+  async getDashboardData(filters: {
+    status?: string;
+    page: number;
+    limit: number;
+  }) {
+    const where = filters.status ? { status: filters.status } : {};
+
+    const [logs, totalLogs, stats] = await Promise.all([
+      this.prisma.whatsAppMessageLog.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (filters.page - 1) * filters.limit,
+        take: filters.limit,
+        include: { contact: { select: { name: true } } },
+      }),
+      this.prisma.whatsAppMessageLog.count({ where }),
+      this.prisma.whatsAppMessageLog.groupBy({
+        by: ["status"],
+        _count: { id: true },
+      }),
+    ]);
+
+    const totalContacts = await this.prisma.whatsAppContact.count({
+      where: { isActive: true },
+    });
+
+    const statsMap: Record<string, number> = {};
+    for (const s of stats) {
+      statsMap[s.status] = s._count.id;
+    }
+
+    return {
+      logs,
+      totalLogs,
+      totalPages: Math.ceil(totalLogs / filters.limit),
+      currentPage: filters.page,
+      stats: {
+        totalMessages: totalLogs,
+        sent: statsMap["sent"] ?? 0,
+        failed: statsMap["failed"] ?? 0,
+        pending: statsMap["pending"] ?? 0,
+        totalContacts,
+      },
+    };
+  }
+
   private async logMessage(
     contactId: string,
     phoneNumber: string,

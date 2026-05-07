@@ -172,6 +172,44 @@ model FileUpload {
   @@map("file_uploads")
 }
 
+// ─── WhatsApp Contacts ────────────────────────────────────────────────────────
+
+model WhatsAppContact {
+  id          String   @id @default(uuid())
+  phoneNumber String   @map("phone_number")
+  name        String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  messageLogs WhatsAppMessageLog[]
+
+  @@unique([phoneNumber])
+  @@index([isActive])
+  @@map("whatsapp_contacts")
+}
+
+// ─── WhatsApp Message Logs ────────────────────────────────────────────────────
+
+model WhatsAppMessageLog {
+  id          String   @id @default(uuid())
+  contactId   String   @map("contact_id")
+  phoneNumber String   @map("phone_number")
+  message     String
+  waMessageId String?  @map("wa_message_id")
+  status      String   @default("pending")
+  errorDetail String?  @map("error_detail")
+  sentAt      DateTime? @map("sent_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  contact     WhatsAppContact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("whatsapp_message_logs")
+}
+
 // ─── Enums ──────────────────────────────────────────────────────────────────────
 
 enum Role {

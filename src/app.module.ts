@@ -1,8 +1,8 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { Module, MiddlewareConsumer, NestModule } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 // Config
 import {
@@ -13,34 +13,36 @@ import {
   mailConfig,
   queueConfig,
   monitoringConfig,
+  whatsappConfig,
   validate,
-} from './config';
+} from "./config";
 
 // Database
-import { DatabaseModule } from './database';
+import { DatabaseModule } from "./database";
 
 // Common services
-import { CommonModule } from './common/services';
+import { CommonModule } from "./common/services";
 
 // Modules
-import { AuthModule } from './modules/auth/auth.module';
-import { UsersModule } from './modules/users/users.module';
-import { HealthModule } from './modules/health/health.module';
-import { AuditModule } from './modules/audit/audit.module';
-import { MailModule } from './modules/mail/mail.module';
-import { CacheConfigModule } from './modules/cache/cache.module';
-import { AppLoggerModule } from './modules/logger/logger.module';
-import { FeatureFlagsModule } from './modules/feature-flags/feature-flags.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
-import { WebhooksModule } from './modules/webhooks/webhooks.module';
-import { FileUploadModule } from './modules/file-upload/file-upload.module';
+import { AuthModule } from "./modules/auth/auth.module";
+import { UsersModule } from "./modules/users/users.module";
+import { HealthModule } from "./modules/health/health.module";
+import { AuditModule } from "./modules/audit/audit.module";
+import { MailModule } from "./modules/mail/mail.module";
+import { CacheConfigModule } from "./modules/cache/cache.module";
+import { AppLoggerModule } from "./modules/logger/logger.module";
+import { FeatureFlagsModule } from "./modules/feature-flags/feature-flags.module";
+import { NotificationsModule } from "./modules/notifications/notifications.module";
+import { WebhooksModule } from "./modules/webhooks/webhooks.module";
+import { FileUploadModule } from "./modules/file-upload/file-upload.module";
+import { WhatsAppAppModule } from "./modules/whatsapp-app/whatsapp-app.module";
 
 // Common
-import { JwtAuthGuard } from './modules/auth/guards';
-import { RolesGuard } from './common/guards';
-import { GlobalExceptionFilter } from './common/filters';
-import { ResponseInterceptor, LoggingInterceptor } from './common/interceptors';
-import { RequestIdMiddleware } from './common/middleware';
+import { JwtAuthGuard } from "./modules/auth/guards";
+import { RolesGuard } from "./common/guards";
+import { GlobalExceptionFilter } from "./common/filters";
+import { ResponseInterceptor, LoggingInterceptor } from "./common/interceptors";
+import { RequestIdMiddleware } from "./common/middleware";
 
 @Module({
   imports: [
@@ -55,8 +57,9 @@ import { RequestIdMiddleware } from './common/middleware';
         mailConfig,
         queueConfig,
         monitoringConfig,
+        whatsappConfig,
       ],
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: [".env.local", ".env"],
       validate,
     }),
 
@@ -87,6 +90,7 @@ import { RequestIdMiddleware } from './common/middleware';
     NotificationsModule,
     WebhooksModule,
     FileUploadModule,
+    WhatsAppAppModule,
   ],
   providers: [
     // Global JWT auth guard
@@ -105,6 +109,6 @@ import { RequestIdMiddleware } from './common/middleware';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestIdMiddleware).forRoutes('*');
+    consumer.apply(RequestIdMiddleware).forRoutes("*");
   }
 }

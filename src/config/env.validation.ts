@@ -69,6 +69,10 @@ class EnvironmentVariables {
   @IsString()
   @IsOptional()
   WHATSAPP_API_URL: string = "https://graph.facebook.com/v25.0";
+
+  @IsString()
+  @IsOptional()
+  WHATSAPP_TEMPLATE_NAME: string = "";
 }
 
 export function validate(config: Record<string, unknown>) {

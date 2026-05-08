@@ -23,7 +23,19 @@ async function bootstrap() {
   ];
 
   // Security
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrcAttr: ["'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:"],
+        },
+      },
+    }),
+  );
   app.use(compression());
   app.use(cookieParser());
   app.use(express.urlencoded({ extended: true }));

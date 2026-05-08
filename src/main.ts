@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import express from "express";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
@@ -25,6 +26,7 @@ async function bootstrap() {
   app.use(helmet());
   app.use(compression());
   app.use(cookieParser());
+  app.use(express.urlencoded({ extended: true }));
 
   // CORS
   app.enableCors({

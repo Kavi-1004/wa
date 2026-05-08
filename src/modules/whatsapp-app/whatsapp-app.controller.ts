@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Req,
   Res,
 } from "@nestjs/common";
 import {
@@ -20,22 +21,28 @@ import {
   ApiParam,
   ApiQuery,
 } from "@nestjs/swagger";
-import type { Response } from "express";
+import type { Request, Response } from "express";
+import { AuthService } from "../auth/auth.service";
 import { WhatsAppAppService } from "./whatsapp-app.service";
 import { StoreContactsDto } from "./dto/store-contacts.dto";
 import { SendMessageDto } from "./dto/send-message.dto";
 import { UpdateContactDto } from "./dto/update-contact.dto";
 import { SendIndividualMessageDto } from "./dto/send-individual-message.dto";
 import { SendBulkMessageDto } from "./dto/send-bulk-message.dto";
-import { Roles } from "../../common/decorators";
-import { Role } from "../../common/enums";
+import { Public } from "../../common/decorators";
 import { renderDashboard } from "./whatsapp-dashboard.renderer";
+import { renderLoginPage } from "./whatsapp-login.renderer";
+
+const COOKIE_NAME = "wa_dashboard_token";
 
 @ApiTags("WhatsApp")
 @ApiBearerAuth()
 @Controller("whatsapp")
 export class WhatsAppAppController {
-  constructor(private readonly whatsAppAppService: WhatsAppAppService) {}
+  constructor(
+    private readonly whatsAppAppService: WhatsAppAppService,
+    private readonly authService: AuthService,
+  ) {}
 
   // ─── Contact CRUD ─────────────────────────────────────────────────────────────
 
@@ -147,17 +154,76 @@ export class WhatsAppAppController {
     });
   }
 
+  // ─── Dashboard Login / Logout ───────────────────────────────────────────────
+
+  @Get("dashboard/login")
+  @Public()
+  @ApiExcludeEndpoint()
+  loginPage(@Req() req: Request, @Res() res: Response) {
+    const token = (req.cookies as Record<string, string>)[COOKIE_NAME];
+    if (token) {
+      res.redirect("../dashboard");
+      return;
+    }
+    res.type("html").send(renderLoginPage());
+  }
+
+  @Post("dashboard/login")
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiExcludeEndpoint()
+  async loginSubmit(@Req() req: Request, @Res() res: Response) {
+    const { email, password } = req.body as {
+      email: string;
+      password: string;
+    };
+
+    try {
+      const result = await this.authService.login(
+        { email, password },
+        req.ip,
+        req.headers["user-agent"],
+      );
+
+      res.cookie(COOKIE_NAME, result.accessToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      res.redirect("../dashboard");
+    } catch {
+      res.type("html").send(renderLoginPage("Invalid email or password."));
+    }
+  }
+
+  @Get("dashboard/logout")
+  @Public()
+  @ApiExcludeEndpoint()
+  logout(@Res() res: Response) {
+    res.clearCookie(COOKIE_NAME, { path: "/" });
+    res.redirect("login");
+  }
+
   // ─── Dashboard ────────────────────────────────────────────────────────────────
 
   @Get("dashboard")
-  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @Public()
   @ApiExcludeEndpoint()
   async dashboard(
     @Query("tab") tab: string | undefined,
     @Query("status") status: string | undefined,
     @Query("page") page: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    const token = (req.cookies as Record<string, string>)[COOKIE_NAME];
+    if (!token) {
+      res.redirect("dashboard/login");
+      return;
+    }
+
     const currentTab = tab ?? "logs";
     const currentStatus = status ?? "";
     const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
@@ -176,6 +242,7 @@ export class WhatsAppAppController {
       contacts,
       currentStatus,
       currentTab,
+      token,
     );
     res.type("html").send(html);
   }

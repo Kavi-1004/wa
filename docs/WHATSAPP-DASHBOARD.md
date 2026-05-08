@@ -6,7 +6,7 @@ The WhatsApp Dashboard is a server-rendered admin panel for managing contacts an
 GET /api/v1/whatsapp/dashboard
 ```
 
-**Access:** Requires `ADMIN` or `SUPER_ADMIN` role with a valid JWT token.
+**Access:** The dashboard has a built-in login page. No browser extensions or manual JWT headers needed — just navigate to the URL and sign in.
 
 ---
 
@@ -24,47 +24,31 @@ GET /api/v1/whatsapp/dashboard
 
 ## Accessing the Dashboard
 
-The dashboard requires JWT authentication. Since it is a server-rendered HTML page, you need to pass the `Authorization` header with your request.
+### Login
 
-### Option 1: Browser Extension (Recommended)
+1. Navigate to `http://localhost:3000/api/v1/whatsapp/dashboard`
+2. You will be redirected to the **login page**
+3. Enter your **email** and **password**
+4. Click **Sign In**
 
-1. Install a header-injection extension such as [ModHeader](https://modheader.com/) for Chrome/Firefox
-2. Add a request header:
-   - **Name:** `Authorization`
-   - **Value:** `Bearer <your-jwt-token>`
-3. Navigate to `http://localhost:3000/api/v1/whatsapp/dashboard`
+After logging in, a session cookie (`wa_dashboard_token`) is set automatically. You can use the dashboard normally without any additional setup.
 
-### Option 2: cURL / HTTP Client
+### Logout
 
-```bash
-curl -s http://localhost:3000/api/v1/whatsapp/dashboard \
-  -H "Authorization: Bearer <your-jwt-token>" \
-  -o dashboard.html
+Click the **Logout** button in the top-right corner of the dashboard, or navigate to:
 
-# Open in browser
-open dashboard.html     # macOS
-xdg-open dashboard.html # Linux
+```
+GET /api/v1/whatsapp/dashboard/logout
 ```
 
-### Option 3: Programmatic Access
+### Dashboard Endpoints
 
-```javascript
-const response = await fetch('/api/v1/whatsapp/dashboard', {
-  headers: { 'Authorization': `Bearer ${token}` }
-});
-const html = await response.text();
-```
-
-### Getting a JWT Token
-
-```bash
-# Login
-curl -s -X POST http://localhost:3000/api/v1/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"admin@test.com","password":"YourPassword"}' | python3 -m json.tool
-
-# Copy the accessToken from the response
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/whatsapp/dashboard` | Main dashboard (redirects to login if not authenticated) |
+| GET | `/api/v1/whatsapp/dashboard/login` | Login page |
+| POST | `/api/v1/whatsapp/dashboard/login` | Authenticate (form submission) |
+| GET | `/api/v1/whatsapp/dashboard/logout` | Clear session and redirect to login |
 
 ---
 

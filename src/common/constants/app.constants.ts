@@ -18,12 +18,12 @@ export const APP_CONSTANTS = {
     RATE_LIMIT_MAX: 100,
     AUTH_RATE_LIMIT_MAX: 10,
     SENSITIVE_FIELDS: [
-      'password',
-      'currentPassword',
-      'newPassword',
-      'confirmPassword',
-      'token',
-      'refreshToken',
+      "password",
+      "currentPassword",
+      "newPassword",
+      "confirmPassword",
+      "token",
+      "refreshToken",
     ],
   },
   WEBHOOKS: {
@@ -32,15 +32,15 @@ export const APP_CONSTANTS = {
   FILE_UPLOAD: {
     MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
     ALLOWED_MIME_TYPES: [
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/webp',
-      'application/pdf',
-      'text/csv',
-      'application/json',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "application/pdf",
+      "text/csv",
+      "application/json",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ],
   },
 } as const;

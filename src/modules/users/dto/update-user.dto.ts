@@ -1,21 +1,21 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsBoolean,
   IsEnum,
   IsOptional,
   IsString,
   MaxLength,
-} from 'class-validator';
-import { Role } from '../../../common/enums';
+} from "class-validator";
+import { Role } from "../../../common/enums";
 
 export class UpdateUserDto {
-  @ApiPropertyOptional({ example: 'John' })
+  @ApiPropertyOptional({ example: "John" })
   @IsOptional()
   @IsString()
   @MaxLength(100)
   firstName?: string;
 
-  @ApiPropertyOptional({ example: 'Doe' })
+  @ApiPropertyOptional({ example: "Doe" })
   @IsOptional()
   @IsString()
   @MaxLength(100)

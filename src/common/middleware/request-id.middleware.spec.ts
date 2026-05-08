@@ -1,7 +1,7 @@
-import { RequestIdMiddleware } from './request-id.middleware';
-import { Request, Response } from 'express';
+import { RequestIdMiddleware } from "./request-id.middleware";
+import { Request, Response } from "express";
 
-describe('RequestIdMiddleware', () => {
+describe("RequestIdMiddleware", () => {
   let middleware: RequestIdMiddleware;
 
   beforeEach(() => {
@@ -17,29 +17,29 @@ describe('RequestIdMiddleware', () => {
     return { req, res, next };
   }
 
-  it('should generate a request ID when none provided', () => {
+  it("should generate a request ID when none provided", () => {
     const { req, res, next } = createMockReqRes();
     middleware.use(req, res, next);
 
     const requestId = (req as unknown as Record<string, unknown>).requestId;
     expect(requestId).toBeDefined();
-    expect(typeof requestId).toBe('string');
+    expect(typeof requestId).toBe("string");
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(res.setHeader).toHaveBeenCalledWith('x-request-id', requestId);
+    expect(res.setHeader).toHaveBeenCalledWith("x-request-id", requestId);
     expect(next).toHaveBeenCalled();
   });
 
-  it('should use provided x-request-id header', () => {
+  it("should use provided x-request-id header", () => {
     const { req, res, next } = createMockReqRes({
-      'x-request-id': 'custom-id',
+      "x-request-id": "custom-id",
     });
     middleware.use(req, res, next);
 
     const requestId = (req as unknown as Record<string, unknown>).requestId;
-    expect(requestId).toBe('custom-id');
+    expect(requestId).toBe("custom-id");
   });
 
-  it('should set correlation ID to request ID when not provided', () => {
+  it("should set correlation ID to request ID when not provided", () => {
     const { req, res, next } = createMockReqRes();
     middleware.use(req, res, next);
 
@@ -49,19 +49,19 @@ describe('RequestIdMiddleware', () => {
     expect(correlationId).toBe(requestId);
   });
 
-  it('should use provided x-correlation-id header', () => {
+  it("should use provided x-correlation-id header", () => {
     const { req, res, next } = createMockReqRes({
-      'x-correlation-id': 'custom-correlation',
+      "x-correlation-id": "custom-correlation",
     });
     middleware.use(req, res, next);
 
     const correlationId = (req as unknown as Record<string, unknown>)
       .correlationId;
-    expect(correlationId).toBe('custom-correlation');
+    expect(correlationId).toBe("custom-correlation");
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(res.setHeader).toHaveBeenCalledWith(
-      'x-correlation-id',
-      'custom-correlation',
+      "x-correlation-id",
+      "custom-correlation",
     );
   });
 });

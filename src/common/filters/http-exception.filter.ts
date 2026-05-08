@@ -5,10 +5,10 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ApiErrorResponse } from '../interfaces';
-import { ErrorCode } from '../enums';
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { ApiErrorResponse } from "../interfaces";
+import { ErrorCode } from "../enums";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -19,11 +19,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = process.env.NODE_ENV === "production";
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
-    let error = 'Internal Server Error';
+    let message = "Internal server error";
+    let error = "Internal Server Error";
     let errorCode: string | undefined;
     let details: unknown = undefined;
 
@@ -31,9 +31,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      if (typeof exceptionResponse === 'string') {
+      if (typeof exceptionResponse === "string") {
         message = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object') {
+      } else if (typeof exceptionResponse === "object") {
         const resp = exceptionResponse as Record<string, unknown>;
         message = (resp.message as string) || message;
         error = (resp.error as string) || error;
@@ -41,7 +41,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
         if (Array.isArray(resp.message)) {
           details = resp.message;
-          message = 'Validation failed';
+          message = "Validation failed";
         }
       }
     } else if (this.isPrismaError(exception)) {
@@ -51,7 +51,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       error = mapped.error;
       errorCode = mapped.errorCode;
     } else if (exception instanceof Error) {
-      message = isProduction ? 'Internal server error' : exception.message;
+      message = isProduction ? "Internal server error" : exception.message;
     }
 
     const requestId = (request as unknown as Record<string, unknown>)
@@ -82,11 +82,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   }
 
   private isPrismaError(exception: unknown): boolean {
-    if (!exception || typeof exception !== 'object') return false;
+    if (!exception || typeof exception !== "object") return false;
     const name = (exception as Record<string, unknown>).constructor?.name;
     return (
-      name === 'PrismaClientKnownRequestError' ||
-      name === 'PrismaClientValidationError'
+      name === "PrismaClientKnownRequestError" ||
+      name === "PrismaClientValidationError"
     );
   }
 
@@ -102,32 +102,32 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     };
 
     switch (prismaError.code) {
-      case 'P2002':
+      case "P2002":
         return {
           status: HttpStatus.CONFLICT,
-          message: `A record with this ${prismaError.meta?.target?.join(', ') || 'value'} already exists`,
-          error: 'Conflict',
+          message: `A record with this ${prismaError.meta?.target?.join(", ") || "value"} already exists`,
+          error: "Conflict",
           errorCode: ErrorCode.UNIQUE_CONSTRAINT,
         };
-      case 'P2025':
+      case "P2025":
         return {
           status: HttpStatus.NOT_FOUND,
-          message: 'Record not found',
-          error: 'Not Found',
+          message: "Record not found",
+          error: "Not Found",
           errorCode: ErrorCode.RECORD_NOT_FOUND,
         };
-      case 'P2003':
+      case "P2003":
         return {
           status: HttpStatus.BAD_REQUEST,
-          message: 'Foreign key constraint failed',
-          error: 'Bad Request',
+          message: "Foreign key constraint failed",
+          error: "Bad Request",
           errorCode: ErrorCode.FOREIGN_KEY_CONSTRAINT,
         };
       default:
         return {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: 'Database error',
-          error: 'Internal Server Error',
+          message: "Database error",
+          error: "Internal Server Error",
           errorCode: ErrorCode.DATABASE_ERROR,
         };
     }

@@ -3,8 +3,8 @@ import {
   OnModuleInit,
   OnModuleDestroy,
   Logger,
-} from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+} from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
 
 @Injectable()
 export class PrismaService
@@ -16,23 +16,23 @@ export class PrismaService
   constructor() {
     super({
       log:
-        process.env.NODE_ENV === 'development'
+        process.env.NODE_ENV === "development"
           ? [
-              { level: 'query', emit: 'event' },
-              { level: 'error', emit: 'stdout' },
-              { level: 'warn', emit: 'stdout' },
+              { level: "query", emit: "event" },
+              { level: "error", emit: "stdout" },
+              { level: "warn", emit: "stdout" },
             ]
-          : [{ level: 'error', emit: 'stdout' }],
+          : [{ level: "error", emit: "stdout" }],
     });
   }
 
   async onModuleInit() {
     await this.$connect();
-    this.logger.log('Database connection established');
+    this.logger.log("Database connection established");
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       // @ts-expect-error -- Prisma event typing
-      this.$on('query', (e: { query: string; duration: number }) => {
+      this.$on("query", (e: { query: string; duration: number }) => {
         this.logger.debug(`Query: ${e.query} [${e.duration}ms]`);
       });
     }
@@ -40,7 +40,7 @@ export class PrismaService
 
   async onModuleDestroy() {
     await this.$disconnect();
-    this.logger.log('Database connection closed');
+    this.logger.log("Database connection closed");
   }
 
   async softDelete<T>(

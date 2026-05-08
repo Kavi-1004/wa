@@ -23,6 +23,7 @@ import {
 } from "@nestjs/swagger";
 import type { Request, Response } from "express";
 import { AuthService } from "../auth/auth.service";
+import { UsersService } from "../users/users.service";
 import { WhatsAppAppService } from "./whatsapp-app.service";
 import { StoreContactsDto } from "./dto/store-contacts.dto";
 import { SendMessageDto } from "./dto/send-message.dto";
@@ -42,6 +43,7 @@ export class WhatsAppAppController {
   constructor(
     private readonly whatsAppAppService: WhatsAppAppService,
     private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   // ─── Contact CRUD ─────────────────────────────────────────────────────────────
@@ -228,14 +230,26 @@ export class WhatsAppAppController {
     const currentStatus = status ?? "";
     const currentPage = Math.max(1, parseInt(page ?? "1", 10) || 1);
 
-    const [dashboardData, contacts] = await Promise.all([
+    const [dashboardData, contacts, usersResult] = await Promise.all([
       this.whatsAppAppService.getDashboardData({
         status: currentStatus || undefined,
         page: currentPage,
         limit: 20,
       }),
       this.whatsAppAppService.getDashboardContacts(),
+      currentTab === "users"
+        ? this.usersService.findAll({ page: currentPage, limit: 20 })
+        : Promise.resolve(null),
     ]);
+
+    const usersData = usersResult
+      ? {
+          users: usersResult.data as any[],
+          total: usersResult.meta.total,
+          page: usersResult.meta.page,
+          totalPages: usersResult.meta.totalPages,
+        }
+      : undefined;
 
     const html = renderDashboard(
       dashboardData,
@@ -243,6 +257,7 @@ export class WhatsAppAppController {
       currentStatus,
       currentTab,
       token,
+      usersData,
     );
     res.type("html").send(html);
   }

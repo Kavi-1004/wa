@@ -1,9 +1,9 @@
-import { RolesGuard } from './roles.guard';
-import { Reflector } from '@nestjs/core';
-import { ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { Role } from '../enums';
+import { RolesGuard } from "./roles.guard";
+import { Reflector } from "@nestjs/core";
+import { ExecutionContext, ForbiddenException } from "@nestjs/common";
+import { Role } from "../enums";
 
-describe('RolesGuard', () => {
+describe("RolesGuard", () => {
   let guard: RolesGuard;
   let reflector: Reflector;
 
@@ -29,33 +29,33 @@ describe('RolesGuard', () => {
     } as unknown as ExecutionContext;
   }
 
-  it('should allow access when no roles are required', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(undefined);
+  it("should allow access when no roles are required", () => {
+    jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(undefined);
     const context = createMockContext({ role: Role.USER });
 
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('should allow access when user has required role', () => {
+  it("should allow access when user has required role", () => {
     jest
-      .spyOn(reflector, 'getAllAndOverride')
+      .spyOn(reflector, "getAllAndOverride")
       .mockReturnValue([Role.ADMIN, Role.SUPER_ADMIN]);
     const context = createMockContext({ role: Role.SUPER_ADMIN });
 
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('should deny access when user lacks required role', () => {
+  it("should deny access when user lacks required role", () => {
     jest
-      .spyOn(reflector, 'getAllAndOverride')
+      .spyOn(reflector, "getAllAndOverride")
       .mockReturnValue([Role.ADMIN, Role.SUPER_ADMIN]);
     const context = createMockContext({ role: Role.USER });
 
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
 
-  it('should deny access when no user on request', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([Role.ADMIN]);
+  it("should deny access when no user on request", () => {
+    jest.spyOn(reflector, "getAllAndOverride").mockReturnValue([Role.ADMIN]);
     const context = createMockContext(undefined);
 
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);

@@ -1,4 +1,4 @@
-import { AuditAction } from '../../../common/enums';
+import { AuditAction } from "../../../common/enums";
 
 export interface CreateAuditLogDto {
   action: AuditAction | string;

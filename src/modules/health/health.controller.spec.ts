@@ -1,10 +1,10 @@
-import { HealthController } from './health.controller';
-import { HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
-import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../../database/prisma.service';
-import { Test, TestingModule } from '@nestjs/testing';
+import { HealthController } from "./health.controller";
+import { HealthCheckService, PrismaHealthIndicator } from "@nestjs/terminus";
+import { ConfigService } from "@nestjs/config";
+import { PrismaService } from "../../database/prisma.service";
+import { Test, TestingModule } from "@nestjs/testing";
 
-describe('HealthController', () => {
+describe("HealthController", () => {
   let controller: HealthController;
 
   const mockHealthCheckService = {
@@ -19,7 +19,7 @@ describe('HealthController', () => {
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
-      if (key === 'redis.enabled') return false;
+      if (key === "redis.enabled") return false;
       return undefined;
     }),
   };
@@ -40,11 +40,11 @@ describe('HealthController', () => {
     controller = module.get<HealthController>(HealthController);
   });
 
-  describe('check', () => {
-    it('should return health check result', async () => {
+  describe("check", () => {
+    it("should return health check result", async () => {
       const healthResult = {
-        status: 'ok',
-        info: { database: { status: 'up' } },
+        status: "ok",
+        info: { database: { status: "up" } },
       };
       mockHealthCheckService.check.mockResolvedValue(healthResult);
 
@@ -55,13 +55,13 @@ describe('HealthController', () => {
     });
   });
 
-  describe('ping', () => {
-    it('should return ok status with timestamp and uptime', () => {
+  describe("ping", () => {
+    it("should return ok status with timestamp and uptime", () => {
       const result = controller.ping();
 
-      expect(result.status).toBe('ok');
+      expect(result.status).toBe("ok");
       expect(result.timestamp).toBeDefined();
-      expect(typeof result.uptime).toBe('number');
+      expect(typeof result.uptime).toBe("number");
     });
   });
 });

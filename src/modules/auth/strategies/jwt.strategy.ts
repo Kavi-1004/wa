@@ -1,12 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from '../../../common/interfaces';
-import { PrismaService } from '../../../database/prisma.service';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { PassportStrategy } from "@nestjs/passport";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { JwtPayload } from "../../../common/interfaces";
+import { PrismaService } from "../../../database/prisma.service";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(
     configService: ConfigService,
     private readonly prisma: PrismaService,
@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey:
-        configService.get<string>('auth.jwtSecret') || 'fallback-secret',
+        configService.get<string>("auth.jwtSecret") || "fallback-secret",
     });
   }
 
@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
 
     if (!user || !user.isActive || user.deletedAt) {
-      throw new UnauthorizedException('User account is inactive or deleted');
+      throw new UnauthorizedException("User account is inactive or deleted");
     }
 
     return payload;

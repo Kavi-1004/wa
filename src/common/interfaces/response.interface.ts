@@ -1,4 +1,4 @@
-import { PaginationMeta } from './pagination.interface';
+import { PaginationMeta } from "./pagination.interface";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;

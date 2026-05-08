@@ -1,1 +1,1 @@
-export * from './file-query.dto';
+export * from "./file-query.dto";

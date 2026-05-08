@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { CreateFeatureFlagDto, UpdateFeatureFlagDto } from './dto';
-import { PaginationQueryDto } from '../../common/dtos';
+import { Injectable, NotFoundException, Logger } from "@nestjs/common";
+import { PrismaService } from "../../database/prisma.service";
+import { CreateFeatureFlagDto, UpdateFeatureFlagDto } from "./dto";
+import { PaginationQueryDto } from "../../common/dtos";
 import {
   buildPaginatedResult,
   buildPrismaQueryOptions,
-} from '../../common/utils/pagination.util';
+} from "../../common/utils/pagination.util";
 
 @Injectable()
 export class FeatureFlagsService {
@@ -29,7 +29,7 @@ export class FeatureFlagsService {
 
   async findOne(id: string) {
     const flag = await this.prisma.featureFlag.findUnique({ where: { id } });
-    if (!flag) throw new NotFoundException('Feature flag not found');
+    if (!flag) throw new NotFoundException("Feature flag not found");
     return flag;
   }
 

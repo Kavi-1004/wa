@@ -5,25 +5,25 @@ import {
   BadRequestException,
   Logger,
   ForbiddenException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../../database/prisma.service';
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { PrismaService } from "../../database/prisma.service";
 import {
   hashPassword,
   comparePassword,
   generateToken,
-} from '../../common/utils';
-import { JwtPayload } from '../../common/interfaces';
-import { Role } from '../../common/enums';
-import { APP_CONSTANTS } from '../../common/constants';
+} from "../../common/utils";
+import { JwtPayload } from "../../common/interfaces";
+import { Role } from "../../common/enums";
+import { APP_CONSTANTS } from "../../common/constants";
 import {
   RegisterDto,
   LoginDto,
   ChangePasswordDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-} from './dto';
+} from "./dto";
 
 @Injectable()
 export class AuthService {
@@ -41,12 +41,12 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException("User with this email already exists");
     }
 
     const hashedPassword = await hashPassword(
       dto.password,
-      this.configService.get<number>('auth.bcryptSaltRounds'),
+      this.configService.get<number>("auth.bcryptSaltRounds"),
     );
 
     const emailVerificationToken = generateToken();
@@ -64,7 +64,7 @@ export class AuthService {
     this.logger.log(`User registered: ${user.email}`);
 
     return {
-      message: 'Registration successful. Please verify your email.',
+      message: "Registration successful. Please verify your email.",
       userId: user.id,
     };
   }
@@ -75,11 +75,11 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     if (!user.isActive) {
-      throw new ForbiddenException('Account is deactivated');
+      throw new ForbiddenException("Account is deactivated");
     }
 
     if (user.lockedUntil && user.lockedUntil > new Date()) {
@@ -106,7 +106,7 @@ export class AuthService {
         data: updateData,
       });
 
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
 
     const tokens = await this.generateTokens({
@@ -169,7 +169,7 @@ export class AuthService {
     }
 
     this.logger.log(`User logged out: ${userId}`);
-    return { message: 'Logged out successfully' };
+    return { message: "Logged out successfully" };
   }
 
   async refreshTokens(refreshToken: string) {
@@ -193,7 +193,7 @@ export class AuthService {
     });
 
     if (!session || !session.user.isActive || session.user.deletedAt) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException("Invalid refresh token");
     }
 
     const tokens = await this.generateTokens({
@@ -230,17 +230,17 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException("User not found");
     }
 
     const isValid = await comparePassword(dto.currentPassword, user.password);
     if (!isValid) {
-      throw new BadRequestException('Current password is incorrect');
+      throw new BadRequestException("Current password is incorrect");
     }
 
     const hashedPassword = await hashPassword(
       dto.newPassword,
-      this.configService.get<number>('auth.bcryptSaltRounds'),
+      this.configService.get<number>("auth.bcryptSaltRounds"),
     );
 
     // Transaction: update password + revoke all sessions atomically
@@ -256,7 +256,7 @@ export class AuthService {
     ]);
 
     this.logger.log(`Password changed for user: ${userId}`);
-    return { message: 'Password changed successfully' };
+    return { message: "Password changed successfully" };
   }
 
   async forgotPassword(dto: ForgotPasswordDto) {
@@ -267,13 +267,13 @@ export class AuthService {
     // Always return success to prevent email enumeration
     if (!user) {
       return {
-        message: 'If an account exists, a password reset email will be sent',
+        message: "If an account exists, a password reset email will be sent",
       };
     }
 
     const token = generateToken();
     const expiresIn =
-      this.configService.get<number>('auth.passwordResetTokenExpiresIn') ||
+      this.configService.get<number>("auth.passwordResetTokenExpiresIn") ||
       3600;
 
     await this.prisma.user.update({
@@ -288,7 +288,7 @@ export class AuthService {
     this.logger.log(`Password reset requested for: ${user.email}`);
 
     return {
-      message: 'If an account exists, a password reset email will be sent',
+      message: "If an account exists, a password reset email will be sent",
     };
   }
 
@@ -301,12 +301,12 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Invalid or expired reset token');
+      throw new BadRequestException("Invalid or expired reset token");
     }
 
     const hashedPassword = await hashPassword(
       dto.newPassword,
-      this.configService.get<number>('auth.bcryptSaltRounds'),
+      this.configService.get<number>("auth.bcryptSaltRounds"),
     );
 
     // Transaction: reset password + revoke all sessions atomically
@@ -326,7 +326,7 @@ export class AuthService {
     ]);
 
     this.logger.log(`Password reset completed for: ${user.email}`);
-    return { message: 'Password reset successful' };
+    return { message: "Password reset successful" };
   }
 
   async verifyEmail(token: string) {
@@ -335,7 +335,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('Invalid verification token');
+      throw new BadRequestException("Invalid verification token");
     }
 
     await this.prisma.user.update({
@@ -347,7 +347,7 @@ export class AuthService {
     });
 
     this.logger.log(`Email verified for: ${user.email}`);
-    return { message: 'Email verified successfully' };
+    return { message: "Email verified successfully" };
   }
 
   async getActiveSessions(userId: string) {
@@ -364,7 +364,7 @@ export class AuthService {
         createdAt: true,
         expiresAt: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -374,7 +374,7 @@ export class AuthService {
       data: { isRevoked: true },
     });
 
-    return { message: 'Session revoked successfully' };
+    return { message: "Session revoked successfully" };
   }
 
   private async generateTokens(payload: JwtPayload) {
@@ -387,17 +387,17 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(tokenPayload, {
         secret:
-          this.configService.get<string>('auth.jwtSecret') || 'fallback-secret',
-        expiresIn: (this.configService.get<string>('auth.jwtExpiresIn') ||
-          '15m') as any,
+          this.configService.get<string>("auth.jwtSecret") || "fallback-secret",
+        expiresIn: (this.configService.get<string>("auth.jwtExpiresIn") ||
+          "15m") as any,
       }),
       this.jwtService.signAsync(tokenPayload, {
         secret:
-          this.configService.get<string>('auth.jwtRefreshSecret') ||
-          'fallback-refresh-secret',
+          this.configService.get<string>("auth.jwtRefreshSecret") ||
+          "fallback-refresh-secret",
         expiresIn: (this.configService.get<string>(
-          'auth.jwtRefreshExpiresIn',
-        ) || '7d') as any,
+          "auth.jwtRefreshExpiresIn",
+        ) || "7d") as any,
       }),
     ]);
 

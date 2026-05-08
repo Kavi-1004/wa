@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { PrismaService } from '../../database/prisma.service';
-import { NotFoundException, ConflictException } from '@nestjs/common';
-import { Role } from '../../common/enums';
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersService } from "./users.service";
+import { PrismaService } from "../../database/prisma.service";
+import { NotFoundException, ConflictException } from "@nestjs/common";
+import { Role } from "../../common/enums";
 
-describe('UsersService', () => {
+describe("UsersService", () => {
   let service: UsersService;
 
   const mockUser = {
-    id: 'user-1',
-    email: 'test@example.com',
-    firstName: 'Test',
-    lastName: 'User',
+    id: "user-1",
+    email: "test@example.com",
+    firstName: "Test",
+    lastName: "User",
     role: Role.USER,
     isActive: true,
     isEmailVerified: true,
@@ -44,8 +44,8 @@ describe('UsersService', () => {
     service = module.get<UsersService>(UsersService);
   });
 
-  describe('findAll', () => {
-    it('should return paginated users', async () => {
+  describe("findAll", () => {
+    it("should return paginated users", async () => {
       mockPrisma.user.findMany.mockResolvedValue([mockUser]);
       mockPrisma.user.count.mockResolvedValue(1);
 
@@ -56,11 +56,11 @@ describe('UsersService', () => {
       expect(result.meta.page).toBe(1);
     });
 
-    it('should apply search filter', async () => {
+    it("should apply search filter", async () => {
       mockPrisma.user.findMany.mockResolvedValue([]);
       mockPrisma.user.count.mockResolvedValue(0);
 
-      await service.findAll({ search: 'john' });
+      await service.findAll({ search: "john" });
 
       expect(mockPrisma.user.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -72,7 +72,7 @@ describe('UsersService', () => {
       );
     });
 
-    it('should exclude soft-deleted users', async () => {
+    it("should exclude soft-deleted users", async () => {
       mockPrisma.user.findMany.mockResolvedValue([]);
       mockPrisma.user.count.mockResolvedValue(0);
 
@@ -86,46 +86,46 @@ describe('UsersService', () => {
     });
   });
 
-  describe('findOne', () => {
-    it('should return a user by ID', async () => {
+  describe("findOne", () => {
+    it("should return a user by ID", async () => {
       mockPrisma.user.findFirst.mockResolvedValue(mockUser);
 
-      const result = await service.findOne('user-1');
+      const result = await service.findOne("user-1");
 
-      expect(result.email).toBe('test@example.com');
+      expect(result.email).toBe("test@example.com");
     });
 
-    it('should throw NotFoundException if user not found', async () => {
+    it("should throw NotFoundException if user not found", async () => {
       mockPrisma.user.findFirst.mockResolvedValue(null);
 
-      await expect(service.findOne('nonexistent')).rejects.toThrow(
+      await expect(service.findOne("nonexistent")).rejects.toThrow(
         NotFoundException,
       );
     });
   });
 
-  describe('create', () => {
+  describe("create", () => {
     const createDto = {
-      email: 'new@example.com',
-      password: 'Test@12345',
-      firstName: 'New',
-      lastName: 'User',
+      email: "new@example.com",
+      password: "Test@12345",
+      firstName: "New",
+      lastName: "User",
       role: Role.USER,
     };
 
-    it('should create a new user', async () => {
+    it("should create a new user", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
       mockPrisma.user.create.mockResolvedValue({
         ...mockUser,
-        email: 'new@example.com',
+        email: "new@example.com",
       });
 
       const result = await service.create(createDto);
 
-      expect(result.email).toBe('new@example.com');
+      expect(result.email).toBe("new@example.com");
     });
 
-    it('should throw ConflictException if email exists', async () => {
+    it("should throw ConflictException if email exists", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(mockUser);
 
       await expect(service.create(createDto)).rejects.toThrow(
@@ -133,62 +133,62 @@ describe('UsersService', () => {
       );
     });
 
-    it('should lowercase the email', async () => {
+    it("should lowercase the email", async () => {
       mockPrisma.user.findUnique.mockResolvedValue(null);
       mockPrisma.user.create.mockResolvedValue(mockUser);
 
-      await service.create({ ...createDto, email: 'UPPER@EXAMPLE.COM' });
+      await service.create({ ...createDto, email: "UPPER@EXAMPLE.COM" });
 
       expect(mockPrisma.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: expect.objectContaining({ email: 'upper@example.com' }),
+          data: expect.objectContaining({ email: "upper@example.com" }),
         }),
       );
     });
   });
 
-  describe('update', () => {
-    it('should update an existing user', async () => {
+  describe("update", () => {
+    it("should update an existing user", async () => {
       mockPrisma.user.findFirst.mockResolvedValue(mockUser);
       mockPrisma.user.update.mockResolvedValue({
         ...mockUser,
-        firstName: 'Updated',
+        firstName: "Updated",
       });
 
-      const result = await service.update('user-1', { firstName: 'Updated' });
+      const result = await service.update("user-1", { firstName: "Updated" });
 
-      expect(result.firstName).toBe('Updated');
+      expect(result.firstName).toBe("Updated");
     });
 
-    it('should throw NotFoundException for nonexistent user', async () => {
+    it("should throw NotFoundException for nonexistent user", async () => {
       mockPrisma.user.findFirst.mockResolvedValue(null);
 
       await expect(
-        service.update('nonexistent', { firstName: 'Test' }),
+        service.update("nonexistent", { firstName: "Test" }),
       ).rejects.toThrow(NotFoundException);
     });
   });
 
-  describe('remove', () => {
-    it('should soft delete a user', async () => {
+  describe("remove", () => {
+    it("should soft delete a user", async () => {
       mockPrisma.user.findFirst.mockResolvedValue(mockUser);
       mockPrisma.user.update.mockResolvedValue({
         ...mockUser,
         deletedAt: new Date(),
       });
 
-      const result = await service.remove('user-1');
+      const result = await service.remove("user-1");
 
-      expect(result.message).toBe('User deleted successfully');
+      expect(result.message).toBe("User deleted successfully");
       expect(mockPrisma.user.update).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
+        where: { id: "user-1" },
         data: { deletedAt: expect.any(Date) },
       });
     });
   });
 
-  describe('restore', () => {
-    it('should restore a soft-deleted user', async () => {
+  describe("restore", () => {
+    it("should restore a soft-deleted user", async () => {
       mockPrisma.user.findFirst.mockResolvedValue({
         ...mockUser,
         deletedAt: new Date(),
@@ -198,19 +198,19 @@ describe('UsersService', () => {
         deletedAt: null,
       });
 
-      const result = await service.restore('user-1');
+      const result = await service.restore("user-1");
 
-      expect(result.message).toBe('User restored successfully');
+      expect(result.message).toBe("User restored successfully");
       expect(mockPrisma.user.update).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
+        where: { id: "user-1" },
         data: { deletedAt: null },
       });
     });
 
-    it('should throw NotFoundException if user is not deleted', async () => {
+    it("should throw NotFoundException if user is not deleted", async () => {
       mockPrisma.user.findFirst.mockResolvedValue(null);
 
-      await expect(service.restore('user-1')).rejects.toThrow(
+      await expect(service.restore("user-1")).rejects.toThrow(
         NotFoundException,
       );
     });

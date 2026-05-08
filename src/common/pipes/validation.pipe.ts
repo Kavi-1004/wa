@@ -3,9 +3,9 @@ import {
   Injectable,
   ArgumentMetadata,
   BadRequestException,
-} from '@nestjs/common';
-import { validate } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
+} from "@nestjs/common";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class CustomValidationPipe implements PipeTransform {
@@ -26,12 +26,12 @@ export class CustomValidationPipe implements PipeTransform {
         field: err.property,
         constraints: err.constraints
           ? Object.values(err.constraints)
-          : ['Validation failed'],
+          : ["Validation failed"],
       }));
 
       throw new BadRequestException({
-        message: 'Validation failed',
-        error: 'Bad Request',
+        message: "Validation failed",
+        error: "Bad Request",
         details: formattedErrors,
       });
     }

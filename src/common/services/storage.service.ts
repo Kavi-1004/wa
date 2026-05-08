@@ -1,10 +1,10 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as crypto from 'crypto';
-import { APP_CONSTANTS } from '../constants';
-import { StoreFileParams, StorageResult } from '../interfaces';
+import { Injectable, Logger, BadRequestException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import * as fs from "fs";
+import * as path from "path";
+import * as crypto from "crypto";
+import { APP_CONSTANTS } from "../constants";
+import { StoreFileParams, StorageResult } from "../interfaces";
 
 @Injectable()
 export class StorageService {
@@ -13,7 +13,7 @@ export class StorageService {
 
   constructor(private readonly configService: ConfigService) {
     this.uploadDir =
-      this.configService.get<string>('app.uploadDir') || './uploads';
+      this.configService.get<string>("app.uploadDir") || "./uploads";
     this.ensureDirectory(this.uploadDir);
   }
 
@@ -21,9 +21,9 @@ export class StorageService {
     this.validate(params);
 
     const ext = path.extname(params.originalName);
-    const hash = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.randomBytes(16).toString("hex");
     const filename = `${hash}${ext}`;
-    const datePrefix = new Date().toISOString().split('T')[0];
+    const datePrefix = new Date().toISOString().split("T")[0];
     const storageKey = path.join(datePrefix, filename);
     const fullPath = path.join(this.uploadDir, storageKey);
 
@@ -34,7 +34,7 @@ export class StorageService {
       `File stored: ${params.originalName} -> ${storageKey} (${params.size} bytes)`,
     );
 
-    return { filename, storageKey, storageType: 'local' };
+    return { filename, storageKey, storageType: "local" };
   }
 
   delete(storageKey: string): void {
@@ -54,7 +54,7 @@ export class StorageService {
       APP_CONSTANTS.FILE_UPLOAD.ALLOWED_MIME_TYPES;
     if (!allowedTypes.includes(params.mimeType)) {
       throw new BadRequestException(
-        `File type '${params.mimeType}' is not allowed. Allowed: ${APP_CONSTANTS.FILE_UPLOAD.ALLOWED_MIME_TYPES.join(', ')}`,
+        `File type '${params.mimeType}' is not allowed. Allowed: ${APP_CONSTANTS.FILE_UPLOAD.ALLOWED_MIME_TYPES.join(", ")}`,
       );
     }
 

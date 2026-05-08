@@ -1,5 +1,5 @@
-import { PaginationMeta, PaginatedResult } from '../interfaces';
-import { PaginationQueryDto } from '../dtos';
+import { PaginationMeta, PaginatedResult } from "../interfaces";
+import { PaginationQueryDto } from "../dtos";
 
 export function buildPaginationMeta(
   query: PaginationQueryDto,
@@ -38,7 +38,7 @@ export function buildPrismaQueryOptions(query: PaginationQueryDto) {
     skip: (page - 1) * limit,
     take: limit,
     orderBy: query.sortBy
-      ? { [query.sortBy]: query.sortOrder || 'desc' }
-      : { createdAt: 'desc' as const },
+      ? { [query.sortBy]: query.sortOrder || "desc" }
+      : { createdAt: "desc" as const },
   };
 }

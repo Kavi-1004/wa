@@ -1,11 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { StorageService } from '../../common/services';
-import { PaginationQueryDto } from '../../common/dtos';
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../database/prisma.service";
+import { StorageService } from "../../common/services";
+import { PaginationQueryDto } from "../../common/dtos";
 import {
   buildPaginatedResult,
   buildPrismaQueryOptions,
-} from '../../common/utils/pagination.util';
+} from "../../common/utils/pagination.util";
 
 export interface UploadFileParams {
   originalname: string;
@@ -67,7 +67,7 @@ export class FileUploadService {
 
   async findOne(id: string) {
     const file = await this.prisma.fileUpload.findUnique({ where: { id } });
-    if (!file) throw new NotFoundException('File not found');
+    if (!file) throw new NotFoundException("File not found");
     return file;
   }
 

@@ -5,4 +5,5 @@ export default registerAs("whatsapp", () => ({
   businessId: process.env.WHATSAPP_BUSINESS_ID || "",
   phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || "",
   apiUrl: process.env.WHATSAPP_API_URL || "https://graph.facebook.com/v25.0",
+  templateName: process.env.WHATSAPP_TEMPLATE_NAME || "",
 }));

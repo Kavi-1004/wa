@@ -19,6 +19,7 @@ The WhatsApp module provides contact management, message sending via the WhatsAp
   - [Send to Selected Contacts (Bulk)](#send-to-selected-contacts-bulk)
 - [Message Logs](#message-logs)
 - [Dashboard](#dashboard)
+  - [Login / Logout](#login--logout)
 - [Database Schema](#database-schema)
 - [Error Handling](#error-handling)
 
@@ -410,7 +411,17 @@ The admin dashboard is a server-rendered HTML page accessible at:
 GET /api/v1/whatsapp/dashboard
 ```
 
-**Access:** Requires `ADMIN` or `SUPER_ADMIN` role.
+**Access:** The dashboard has its own login page — no manual JWT header setup is needed. Just navigate to the URL and sign in with your email and password.
+
+### Login / Logout
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/whatsapp/dashboard/login` | Login page |
+| POST | `/api/v1/whatsapp/dashboard/login` | Authenticate and redirect to dashboard |
+| GET | `/api/v1/whatsapp/dashboard/logout` | Clear session and redirect to login |
+
+Authentication is handled via an HTTP-only cookie (`wa_dashboard_token`). After logging in, all dashboard actions (add/edit/delete contacts, send messages) work automatically without any browser extension.
 
 ### Features
 

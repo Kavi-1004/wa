@@ -281,15 +281,17 @@ function renderContactsTab(contacts: DashboardContact[]): string {
     </div>`;
 }
 
-function dashboardScript(): string {
+function dashboardScript(token: string): string {
   return `
   <script>
     const API = '/api/v1/whatsapp';
+    const TOKEN = '${token}';
 
     async function apiCall(method, path, body) {
-      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      const opts = { method, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN } };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(API + path, opts);
+      if (res.status === 401) { window.location.href = 'dashboard/login'; return; }
       return res.json();
     }
 
@@ -414,6 +416,7 @@ export function renderDashboard(
   contacts: DashboardContact[],
   currentStatus: string,
   currentTab: string,
+  token: string,
 ): string {
   const { stats } = data;
 
@@ -471,6 +474,7 @@ export function renderDashboard(
       <div class="header-actions">
         <a href="javascript:location.reload()" class="btn-secondary">Refresh</a>
         <a href="/docs#/WhatsApp" class="btn-primary">API Docs</a>
+        <a href="dashboard/logout" class="btn-secondary" style="color:#dc2626;border-color:#fca5a5;">Logout</a>
       </div>
     </div>
 
@@ -508,7 +512,7 @@ export function renderDashboard(
       WhatsApp Messaging Dashboard
     </div>
   </div>
-  ${currentTab === "contacts" ? dashboardScript() : "<script>setTimeout(()=>location.reload(), 30000);</script>"}
+  ${currentTab === "contacts" ? dashboardScript(token) : "<script>setTimeout(()=>location.reload(), 30000);</script>"}
 </body>
 </html>`;
 }

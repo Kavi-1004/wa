@@ -6,7 +6,7 @@ export function buildSearchFilter(
 
   return {
     OR: fields.map((field) => ({
-      [field]: { contains: search, mode: 'insensitive' },
+      [field]: { contains: search, mode: "insensitive" },
     })),
   };
 }

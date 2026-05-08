@@ -1,8 +1,8 @@
-import { LoggingInterceptor } from './logging.interceptor';
-import { ExecutionContext, CallHandler } from '@nestjs/common';
-import { of } from 'rxjs';
+import { LoggingInterceptor } from "./logging.interceptor";
+import { ExecutionContext, CallHandler } from "@nestjs/common";
+import { of } from "rxjs";
 
-describe('LoggingInterceptor', () => {
+describe("LoggingInterceptor", () => {
   let interceptor: LoggingInterceptor;
 
   beforeEach(() => {
@@ -13,11 +13,11 @@ describe('LoggingInterceptor', () => {
     return {
       switchToHttp: () => ({
         getRequest: () => ({
-          method: 'GET',
-          url: '/api/v1/test',
-          ip: '127.0.0.1',
-          get: () => 'jest-agent',
-          requestId: 'req-123',
+          method: "GET",
+          url: "/api/v1/test",
+          ip: "127.0.0.1",
+          get: () => "jest-agent",
+          requestId: "req-123",
         }),
         getResponse: () => ({ statusCode: 200 }),
       }),
@@ -31,9 +31,9 @@ describe('LoggingInterceptor', () => {
     } as unknown as ExecutionContext;
   }
 
-  it('should log request and response', (done) => {
+  it("should log request and response", (done) => {
     const context = createMockContext();
-    const handler: CallHandler = { handle: () => of({ data: 'test' }) };
+    const handler: CallHandler = { handle: () => of({ data: "test" }) };
 
     interceptor.intercept(context, handler).subscribe({
       next: () => {
@@ -43,9 +43,9 @@ describe('LoggingInterceptor', () => {
     });
   });
 
-  it('should pass through the response data unchanged', (done) => {
+  it("should pass through the response data unchanged", (done) => {
     const context = createMockContext();
-    const responseData = { id: '1', name: 'test' };
+    const responseData = { id: "1", name: "test" };
     const handler: CallHandler = { handle: () => of(responseData) };
 
     interceptor.intercept(context, handler).subscribe((result) => {

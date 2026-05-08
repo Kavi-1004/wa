@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsArray,
   IsBoolean,
@@ -6,21 +6,21 @@ import {
   IsString,
   IsUrl,
   MaxLength,
-} from 'class-validator';
+} from "class-validator";
 
 export class UpdateWebhookDto {
-  @ApiPropertyOptional({ example: 'Updated Webhook' })
+  @ApiPropertyOptional({ example: "Updated Webhook" })
   @IsOptional()
   @IsString()
   @MaxLength(200)
   name?: string;
 
-  @ApiPropertyOptional({ example: 'https://example.com/webhook-v2' })
+  @ApiPropertyOptional({ example: "https://example.com/webhook-v2" })
   @IsOptional()
   @IsUrl()
   url?: string;
 
-  @ApiPropertyOptional({ example: ['user.created'] })
+  @ApiPropertyOptional({ example: ["user.created"] })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

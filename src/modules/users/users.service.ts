@@ -3,19 +3,19 @@ import {
   NotFoundException,
   ConflictException,
   Logger,
-} from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { PaginationQueryDto } from '../../common/dtos';
+} from "@nestjs/common";
+import { PrismaService } from "../../database/prisma.service";
+import { PaginationQueryDto } from "../../common/dtos";
 import {
   buildPaginatedResult,
   buildPrismaQueryOptions,
-} from '../../common/utils';
+} from "../../common/utils";
 import {
   buildSearchFilter,
   buildSoftDeleteFilter,
-} from '../../database/helpers';
-import { hashPassword } from '../../common/utils';
-import { CreateUserDto, UpdateUserDto } from './dto';
+} from "../../database/helpers";
+import { hashPassword } from "../../common/utils";
+import { CreateUserDto, UpdateUserDto } from "./dto";
 
 @Injectable()
 export class UsersService {
@@ -39,9 +39,9 @@ export class UsersService {
   async findAll(query: PaginationQueryDto) {
     const { skip, take, orderBy } = buildPrismaQueryOptions(query);
     const searchFilter = buildSearchFilter(query.search, [
-      'email',
-      'firstName',
-      'lastName',
+      "email",
+      "firstName",
+      "lastName",
     ]);
     const softDeleteFilter = buildSoftDeleteFilter();
 
@@ -68,7 +68,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
 
     return user;
@@ -80,7 +80,7 @@ export class UsersService {
     });
 
     if (existing) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException("User with this email already exists");
     }
 
     const hashedPassword = await hashPassword(dto.password);
@@ -123,7 +123,7 @@ export class UsersService {
     });
 
     this.logger.log(`User soft-deleted: ${id}`);
-    return { message: 'User deleted successfully' };
+    return { message: "User deleted successfully" };
   }
 
   async restore(id: string) {
@@ -132,7 +132,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException('Deleted user not found');
+      throw new NotFoundException("Deleted user not found");
     }
 
     await this.prisma.user.update({
@@ -141,6 +141,6 @@ export class UsersService {
     });
 
     this.logger.log(`User restored: ${id}`);
-    return { message: 'User restored successfully' };
+    return { message: "User restored successfully" };
   }
 }

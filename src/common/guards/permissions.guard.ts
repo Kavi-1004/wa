@@ -3,10 +3,10 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Permission } from '../enums';
-import { PERMISSIONS_KEY } from '../decorators';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { Permission } from "../enums";
+import { PERMISSIONS_KEY } from "../decorators";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -25,7 +25,7 @@ export class PermissionsGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
 
     if (!user || !user.permissions) {
-      throw new ForbiddenException('Access denied');
+      throw new ForbiddenException("Access denied");
     }
 
     const hasPermission = requiredPermissions.every((permission) =>
@@ -34,7 +34,7 @@ export class PermissionsGuard implements CanActivate {
 
     if (!hasPermission) {
       throw new ForbiddenException(
-        'You do not have the required permissions to access this resource',
+        "You do not have the required permissions to access this resource",
       );
     }
 

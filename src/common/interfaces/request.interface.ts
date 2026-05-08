@@ -1,5 +1,5 @@
-import { Request } from 'express';
-import { Role } from '../enums';
+import { Request } from "express";
+import { Role } from "../enums";
 
 export interface JwtPayload {
   sub: string;

@@ -1,10 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../database/prisma.service";
 import {
   buildPaginatedResult,
   buildPrismaQueryOptions,
-} from '../../common/utils';
-import { CreateAuditLogDto, AuditQueryDto } from './dto';
+} from "../../common/utils";
+import { CreateAuditLogDto, AuditQueryDto } from "./dto";
 
 @Injectable()
 export class AuditService {
@@ -28,7 +28,7 @@ export class AuditService {
         },
       });
     } catch (error) {
-      this.logger.error('Failed to create audit log', (error as Error).stack);
+      this.logger.error("Failed to create audit log", (error as Error).stack);
     }
   }
 
@@ -67,7 +67,7 @@ export class AuditService {
         },
       },
     });
-    if (!log) throw new NotFoundException('Audit log not found');
+    if (!log) throw new NotFoundException("Audit log not found");
     return log;
   }
 }

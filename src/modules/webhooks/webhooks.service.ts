@@ -1,15 +1,15 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { PaginationQueryDto } from '../../common/dtos';
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../database/prisma.service";
+import { PaginationQueryDto } from "../../common/dtos";
 import {
   buildPaginatedResult,
   buildPrismaQueryOptions,
-} from '../../common/utils';
-import { APP_CONSTANTS } from '../../common/constants';
-import { CreateWebhookDto, UpdateWebhookDto } from './dto';
-import { generateToken } from '../../common/utils/hash.util';
-import type { InputJsonValue } from '@prisma/client/runtime/library';
-import * as crypto from 'crypto';
+} from "../../common/utils";
+import { APP_CONSTANTS } from "../../common/constants";
+import { CreateWebhookDto, UpdateWebhookDto } from "./dto";
+import { generateToken } from "../../common/utils/hash.util";
+import type { InputJsonValue } from "@prisma/client/runtime/library";
+import * as crypto from "crypto";
 
 @Injectable()
 export class WebhooksService {
@@ -45,7 +45,7 @@ export class WebhooksService {
 
   async findOne(id: string) {
     const webhook = await this.prisma.webhook.findUnique({ where: { id } });
-    if (!webhook) throw new NotFoundException('Webhook not found');
+    if (!webhook) throw new NotFoundException("Webhook not found");
     return webhook;
   }
 
@@ -104,17 +104,17 @@ export class WebhooksService {
       timestamp: new Date().toISOString(),
     });
     const signature = crypto
-      .createHmac('sha256', secret)
+      .createHmac("sha256", secret)
       .update(body)
-      .digest('hex');
+      .digest("hex");
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Webhook-Signature': signature,
-          'X-Webhook-Event': event,
+          "Content-Type": "application/json",
+          "X-Webhook-Signature": signature,
+          "X-Webhook-Event": event,
         },
         body,
         signal: AbortSignal.timeout(APP_CONSTANTS.WEBHOOKS.DELIVERY_TIMEOUT_MS),

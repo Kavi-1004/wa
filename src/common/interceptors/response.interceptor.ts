@@ -3,10 +3,10 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApiResponse } from '../interfaces';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { ApiResponse } from "../interfaces";
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<
@@ -23,15 +23,15 @@ export class ResponseInterceptor<T> implements NestInterceptor<
     return next.handle().pipe(
       map((data) => {
         const result = data as Record<string, unknown> | undefined;
-        const isPaginated = result && 'data' in result && 'meta' in result;
+        const isPaginated = result && "data" in result && "meta" in result;
 
         return {
           success: true,
           statusCode: response.statusCode,
-          message: (result?.message as string) || 'Success',
+          message: (result?.message as string) || "Success",
           data: isPaginated ? result.data : data,
           meta: isPaginated
-            ? (result.meta as ApiResponse<T>['meta'])
+            ? (result.meta as ApiResponse<T>["meta"])
             : undefined,
           requestId: request.requestId,
           timestamp: new Date().toISOString(),

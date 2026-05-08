@@ -4,13 +4,13 @@ import {
   ExecutionContext,
   CallHandler,
   Logger,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { AUDIT_KEY, AuditMetadata } from '../decorators/audit.decorator';
-import { AuditService } from '../../modules/audit/audit.service';
-import { APP_CONSTANTS } from '../constants';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
+import { AUDIT_KEY, AuditMetadata } from "../decorators/audit.decorator";
+import { AuditService } from "../../modules/audit/audit.service";
+import { APP_CONSTANTS } from "../constants";
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
@@ -53,10 +53,10 @@ export class AuditInterceptor implements NestInterceptor {
                 response: data,
               },
               ipAddress: request.ip,
-              userAgent: request.get('user-agent'),
+              userAgent: request.get("user-agent"),
             })
             .catch((err: Error) =>
-              this.logger.error('Failed to create audit log', err.stack),
+              this.logger.error("Failed to create audit log", err.stack),
             );
         },
       }),
@@ -68,7 +68,7 @@ export class AuditInterceptor implements NestInterceptor {
     const sanitized = { ...body };
     for (const field of APP_CONSTANTS.SECURITY.SENSITIVE_FIELDS) {
       if (sanitized[field]) {
-        sanitized[field] = '[REDACTED]';
+        sanitized[field] = "[REDACTED]";
       }
     }
     return sanitized;

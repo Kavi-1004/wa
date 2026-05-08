@@ -1,2 +1,2 @@
-export * from './storage.service';
-export * from './common.module';
+export * from "./storage.service";
+export * from "./common.module";

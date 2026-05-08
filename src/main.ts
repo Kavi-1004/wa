@@ -23,7 +23,24 @@ async function bootstrap() {
   ];
 
   // Security
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+          fontSrc: ["'self'", "https:", "data:"],
+          imgSrc: ["'self'", "data:"],
+          objectSrc: ["'none'"],
+          formAction: ["'self'"],
+          frameAncestors: ["'self'"],
+          baseUri: ["'self'"],
+          upgradeInsecureRequests: [],
+        },
+      },
+    }),
+  );
   app.use(compression());
   app.use(cookieParser());
   app.use(express.urlencoded({ extended: true }));

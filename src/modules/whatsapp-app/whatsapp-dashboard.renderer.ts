@@ -490,7 +490,9 @@ function dashboardScript(token: string): string {
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(API + path, opts);
       if (res.status === 401) { window.location.href = 'dashboard/login'; return; }
-      return res.json();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Request failed');
+      return json;
     }
 
     async function usersApiCall(method, path, body) {
@@ -498,7 +500,9 @@ function dashboardScript(token: string): string {
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(USERS_API + path, opts);
       if (res.status === 401) { window.location.href = 'dashboard/login'; return; }
-      return res.json();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Request failed');
+      return json;
     }
 
     async function addContact(e) {
@@ -651,8 +655,7 @@ function dashboardScript(token: string): string {
       const role = document.getElementById('newUserRole').value;
       const el = document.getElementById('createUserResult');
       try {
-        const r = await usersApiCall('POST', '', { email, firstName, lastName, password, role });
-        if (r.success === false) { el.innerHTML = '<span style="color:#dc2626;">Failed: ' + (r.message || 'Unknown error') + '</span>'; return; }
+        await usersApiCall('POST', '', { email, firstName, lastName, password, role });
         el.innerHTML = '<span style="color:#16a34a;">User created successfully!</span>';
         setTimeout(() => location.reload(), 800);
       } catch (err) {
@@ -680,8 +683,7 @@ function dashboardScript(token: string): string {
       const isActive = document.getElementById('editUserActive').value === 'true';
       const el = document.getElementById('editUserResult');
       try {
-        const r = await usersApiCall('PATCH', '/' + id, { firstName, lastName, role, isActive });
-        if (r.success === false) { el.innerHTML = '<span style="color:#dc2626;">Failed: ' + (r.message || 'Unknown error') + '</span>'; return; }
+        await usersApiCall('PATCH', '/' + id, { firstName, lastName, role, isActive });
         el.innerHTML = '<span style="color:#16a34a;">Updated!</span>';
         setTimeout(() => location.reload(), 800);
       } catch (err) {
@@ -692,16 +694,14 @@ function dashboardScript(token: string): string {
     async function deleteUser(id) {
       if (!confirm('Delete this user? (soft delete)')) return;
       try {
-        const r = await usersApiCall('DELETE', '/' + id);
-        if (r.success === false) { alert('Failed: ' + (r.message || 'Unknown error')); return; }
+        await usersApiCall('DELETE', '/' + id);
         location.reload();
       } catch (err) { alert('Failed: ' + err.message); }
     }
 
     async function restoreUser(id) {
       try {
-        const r = await usersApiCall('POST', '/' + id + '/restore');
-        if (r.success === false) { alert('Failed: ' + (r.message || 'Unknown error')); return; }
+        await usersApiCall('POST', '/' + id + '/restore');
         location.reload();
       } catch (err) { alert('Failed: ' + err.message); }
     }

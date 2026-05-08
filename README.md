@@ -177,6 +177,69 @@ test/                        # E2E tests
 | DELETE | `/api/v1/auth/sessions/:id` | Revoke session | Bearer |
 | GET  | `/api/v1/auth/me` | Get current user | Bearer |
 
+## WhatsApp Messaging Module
+
+Built-in WhatsApp Cloud API integration for contact management, message sending, and delivery tracking.
+
+### Features
+
+- **Contact Management** — Bulk import, CRUD operations, soft-delete (deactivate/reactivate)
+- **Message Sending** — Send to individual contacts, selected contacts, or all active contacts
+- **Template Support** — Use pre-approved WhatsApp message templates (configurable via `WHATSAPP_TEMPLATE_NAME`)
+- **Message Logs** — Full delivery history with status tracking, error details, and filtering
+- **Admin Dashboard** — Server-rendered UI with message logs, contact management, and stats overview
+
+### Quick Start
+
+1. Add WhatsApp credentials to `.env`:
+   ```env
+   WHATSAPP_API_TOKEN=your-token
+   WHATSAPP_PHONE_NUMBER_ID=your-phone-number-id
+   WHATSAPP_TEMPLATE_NAME=hello_world
+   ```
+
+2. Store contacts:
+   ```bash
+   curl -X POST http://localhost:3000/api/v1/whatsapp/contacts \
+     -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"contacts": [{"phoneNumber": "919876543210", "name": "Alice"}]}'
+   ```
+
+3. Send a message:
+   ```bash
+   curl -X POST http://localhost:3000/api/v1/whatsapp/send \
+     -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"message": "Hello!"}'
+   ```
+
+4. View the dashboard (requires ADMIN role):
+   ```
+   GET http://localhost:3000/api/v1/whatsapp/dashboard
+   ```
+
+### WhatsApp API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/whatsapp/contacts` | Store contacts (bulk) |
+| GET | `/api/v1/whatsapp/contacts` | List active contacts (paginated) |
+| GET | `/api/v1/whatsapp/contacts/:id` | Get single contact |
+| PATCH | `/api/v1/whatsapp/contacts/:id` | Update contact |
+| DELETE | `/api/v1/whatsapp/contacts/:id` | Deactivate contact |
+| POST | `/api/v1/whatsapp/send` | Send to all active contacts |
+| POST | `/api/v1/whatsapp/send/:contactId` | Send to individual contact |
+| POST | `/api/v1/whatsapp/send-bulk` | Send to selected contacts |
+| GET | `/api/v1/whatsapp/logs` | Message logs (filterable) |
+| GET | `/api/v1/whatsapp/dashboard` | Admin dashboard (ADMIN only) |
+
+### Documentation
+
+- [API Reference](docs/WHATSAPP.md) — Full endpoint docs with request/response examples
+- [Setup & Deployment Guide](docs/WHATSAPP-SETUP.md) — WhatsApp Business Account setup, local dev, production deployment
+- [Dashboard Guide](docs/WHATSAPP-DASHBOARD.md) — Dashboard features and usage instructions
+
 ## Generate Resources
 
 ```bash
